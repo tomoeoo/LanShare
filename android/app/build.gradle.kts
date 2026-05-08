@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation("com.github.google:webrtc:1.0.32006")
+    implementation("io.getstream:stream-webrtc-android:1.1.1")
     implementation("org.jmdns:jmdns:3.5.8")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
