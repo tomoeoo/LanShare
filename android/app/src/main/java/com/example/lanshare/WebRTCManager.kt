@@ -62,7 +62,8 @@ object WebRTCManager {
             override fun onRemoveStream(stream: MediaStream?) {}
             override fun onRemoveTrack(receiver: RtpReceiver?) {}
             override fun onIceConnectionReceivingChange(receiving: Boolean) {}
-            override fun onIceCandidatesRemoved(candidates: Array<out IceCandidate>?) {}  // 必加方法
+            override fun onIceCandidatesRemoved(candidates: Array<out IceCandidate>?) {}
+            override fun onRenegotiationNeeded() {}   // ← 新增这一行
         }
         peerConnection = factory.createPeerConnection(rtcConfig, observer)
         localVideoTrack?.let { peerConnection?.addTrack(it, listOf("screenshare")) }
