@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LanShare</string>
+    <string name="accessibility_service_desc">用于远程控制屏幕的手势注入</string>
+</resources>
