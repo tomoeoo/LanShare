@@ -2,6 +2,7 @@ package com.example.lanshare
 
 import android.content.Context
 import android.content.Intent
+import android.media.projection.MediaProjection
 import org.webrtc.*
 
 object WebRTCManager {
@@ -60,7 +61,8 @@ object WebRTCManager {
             override fun onAddTrack(receiver: RtpReceiver?, streams: Array<out MediaStream>?) {}
             override fun onRemoveStream(stream: MediaStream?) {}
             override fun onRemoveTrack(receiver: RtpReceiver?) {}
-            override fun onIceConnectionReceivingChange(receiving: Boolean) {} // 新增这个方法
+            override fun onIceConnectionReceivingChange(receiving: Boolean) {}
+            override fun onIceCandidatesRemoved(candidates: Array<out IceCandidate>?) {}  // 新增方法
         }
         peerConnection = factory.createPeerConnection(rtcConfig, observer)
         localVideoTrack?.let { peerConnection?.addTrack(it, listOf("screenshare")) }
