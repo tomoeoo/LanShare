@@ -12,9 +12,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22          # 改这里
+          node-version: 22
       - name: Build Electron app
         working-directory: ./windows
+        env:
+          npm_config_msvs_version: 2022   # 关键修复配置
         run: |
           npm install
           npx electron-builder --win portable
