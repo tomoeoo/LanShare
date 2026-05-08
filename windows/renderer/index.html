@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LanShare Windows</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <h2>局域网设备</h2>
+    <ul id="device-list"></ul>
+    <div id="remote-container" style="display:none;">
+      <video id="remote-video" autoplay playsinline></video>
+      <button id="stop-btn">停止</button>
+    </div>
+    <button id="push-btn" disabled>推送到选中设备</button>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>
