@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const net = require('net');
 const mdns = require('multicast-dns');
 const os = require('os');
-const robot = require('robotjs');
+// const robot = require('robotjs');   // 暂时禁用远程控制
 const path = require('path');
 
 let mainWindow;
@@ -91,7 +91,6 @@ function startSignalingServer() {
           remoteName = msg.name;
           // 无确认直接应答
           socket.write(JSON.stringify({ type: 'accepted', from: deviceName }));
-          // 通知渲染进程有新连接
           mainWindow.webContents.send('webrtc-signal', { type: 'peer-joined', name: remoteName, socketId: socket.remotePort });
         } else if (msg.type === 'offer' || msg.type === 'answer' || msg.type === 'candidate') {
           mainWindow.webContents.send('webrtc-signal', { ...msg, peerId: remoteName });
@@ -113,22 +112,21 @@ function startSignalingServer() {
   });
 }
 
-// 远程控制执行
+// 远程控制执行（暂时禁用 robotjs 调用）
 function executeControl(cmd) {
   try {
     switch (cmd.type) {
-      case 'mousemove': robot.moveMouse(cmd.x, cmd.y); break;
-      case 'mousedown': robot.mouseToggle('down', cmd.button || 'left'); break;
-      case 'mouseup': robot.mouseToggle('up', cmd.button || 'left'); break;
-      case 'keydown': robot.keyToggle(cmd.key, 'down'); break;
-      case 'keyup': robot.keyToggle(cmd.key, 'up'); break;
+      case 'mousemove': // robot.moveMouse(cmd.x, cmd.y); break;
+      case 'mousedown': // robot.mouseToggle('down', cmd.button || 'left'); break;
+      case 'mouseup':   // robot.mouseToggle('up', cmd.button || 'left'); break;
+      case 'keydown':   // robot.keyToggle(cmd.key, 'down'); break;
+      case 'keyup':     // robot.keyToggle(cmd.key, 'up'); break;
     }
   } catch (e) { console.error('控制执行出错:', e); }
 }
 
 // 发送信令到指定对端（通过TCP）
 ipcMain.on('send-signal', (event, { peerId, msg }) => {
-  // 需要找到已连接的对端socket，这里简化：通过peerId从mDNS已知信息连接
   const device = onlineDevices.get(peerId);
   if (!device) return;
   const client = net.connect({ port: device.port, host: device.ip }, () => {
