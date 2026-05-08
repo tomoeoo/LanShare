@@ -10,6 +10,7 @@ import android.os.IBinder
 import kotlinx.coroutines.*
 import java.net.ServerSocket
 import kotlin.concurrent.thread
+import org.json.JSONObject
 
 class SignalingService : Service() {
     private var serverSocket: ServerSocket? = null
