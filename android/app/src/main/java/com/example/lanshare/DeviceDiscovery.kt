@@ -2,8 +2,10 @@ package com.example.lanshare
 
 import android.content.Context
 import kotlinx.coroutines.*
-import org.jmdns.JmDNS
-import org.jmdns.ServiceInfo
+import javax.jmdns.JmDNS
+import javax.jmdns.ServiceInfo
+import javax.jmdns.ServiceEvent
+import javax.jmdns.ServiceListener
 import java.net.InetAddress
 
 object DeviceDiscovery {
@@ -26,13 +28,13 @@ object DeviceDiscovery {
     }
 
     fun discover(callback: (Map<String, Pair<String, Int>>) -> Unit) {
-        jmdns?.addServiceListener("_lanshare._tcp.local.", object : org.jmdns.ServiceListener {
-            override fun serviceAdded(event: org.jmdns.ServiceEvent) {}
-            override fun serviceRemoved(event: org.jmdns.ServiceEvent) {
+        jmdns?.addServiceListener("_lanshare._tcp.local.", object : ServiceListener {
+            override fun serviceAdded(event: ServiceEvent) {}
+            override fun serviceRemoved(event: ServiceEvent) {
                 onlineDevices.remove(event.name)
                 callback(onlineDevices.toMap())
             }
-            override fun serviceResolved(event: org.jmdns.ServiceEvent) {
+            override fun serviceResolved(event: ServiceEvent) {
                 onlineDevices[event.name] = Pair(
                     event.info.inetAddresses[0].hostAddress,
                     event.info.port
