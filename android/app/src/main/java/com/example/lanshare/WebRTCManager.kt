@@ -7,12 +7,15 @@ import android.util.Log
 import org.webrtc.*
 
 object WebRTCManager {
-    private lateinit var factory: PeerConnectionFactory
+    private var factory: PeerConnectionFactory? = null
     private var peerConnection: PeerConnection? = null
     private var localVideoTrack: VideoTrack? = null
     private var rootEglBase: EglBase? = null
+    private var isInitialized = false
 
+    @Throws(RuntimeException::class)
     fun initialize(context: Context) {
+        if (isInitialized) return
         try {
             rootEglBase = EglBase.create()
             val options = PeerConnectionFactory.InitializationOptions.builder(context)
@@ -23,27 +26,29 @@ object WebRTCManager {
                 .setVideoEncoderFactory(DefaultVideoEncoderFactory(rootEglBase!!.eglBaseContext, true, true))
                 .setVideoDecoderFactory(DefaultVideoDecoderFactory(rootEglBase!!.eglBaseContext))
                 .createPeerConnectionFactory()
+            isInitialized = true
         } catch (e: Exception) {
             Log.e("WebRTCManager", "初始化失败", e)
-            throw RuntimeException("WebRTC 初始化失败，请确认设备支持 OpenGL ES", e)
+            throw RuntimeException("WebRTC 初始化失败，该设备可能不支持 OpenGL ES", e)
         }
     }
 
     fun startScreenCapture(context: Context, resultCode: Int, data: Intent) {
+        if (!isInitialized) throw IllegalStateException("WebRTC 未初始化")
         try {
-            if (rootEglBase == null) initialize(context)
-            val videoSource = factory.createVideoSource(false)
+            val videoSource = factory!!.createVideoSource(false)
             val surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", rootEglBase!!.eglBaseContext)
             val capturer = ScreenCapturerAndroid(data, object : MediaProjection.Callback() {})
             capturer.initialize(surfaceTextureHelper, context, videoSource.capturerObserver)
             capturer.startCapture(720, 1280, 30)
-            localVideoTrack = factory.createVideoTrack("screenshare", videoSource)
+            localVideoTrack = factory!!.createVideoTrack("screenshare", videoSource)
         } catch (e: Exception) {
             Log.e("WebRTCManager", "屏幕捕获失败", e)
         }
     }
 
     fun onPeerConnected(name: String, ip: String, port: Int) {
+        if (!isInitialized) return
         createPeerConnection(name)
     }
 
@@ -76,7 +81,7 @@ object WebRTCManager {
             override fun onIceCandidatesRemoved(candidates: Array<out IceCandidate>?) {}
             override fun onRenegotiationNeeded() {}
         }
-        peerConnection = factory.createPeerConnection(rtcConfig, observer)
+        peerConnection = factory?.createPeerConnection(rtcConfig, observer)
         localVideoTrack?.let { peerConnection?.addTrack(it, listOf("screenshare")) }
     }
 }
