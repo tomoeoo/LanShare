@@ -3,7 +3,6 @@ package com.example.lanshare
 import android.content.Context
 import android.content.Intent
 import org.webrtc.*
-import org.webrtc.audio.JavaAudioDeviceModule
 
 object WebRTCManager {
     private lateinit var factory: PeerConnectionFactory
@@ -26,14 +25,13 @@ object WebRTCManager {
     fun startScreenCapture(context: Context, resultCode: Int, data: Intent) {
         val videoSource = factory.createVideoSource(false)
         val surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", rootEglBase.eglBaseContext)
-        val capturer = ScreenCapturerAndroid(data, object : MediaProjection.Callback(){})
+        val capturer = ScreenCapturerAndroid(data, object : MediaProjection.Callback() {})
         capturer.initialize(surfaceTextureHelper, context, videoSource.capturerObserver)
         capturer.startCapture(720, 1280, 30)
         localVideoTrack = factory.createVideoTrack("screenshare", videoSource)
     }
 
     fun onPeerConnected(name: String, ip: String, port: Int) {
-        // 创建 PeerConnection 并发起或接受 WebRTC 连接，此处示例为自动发起查看（拉流）
         createPeerConnection(name)
     }
 
@@ -51,9 +49,7 @@ object WebRTCManager {
             override fun onAddStream(stream: MediaStream?) {}
             override fun onDataChannel(channel: DataChannel?) {
                 channel?.registerObserver(object : DataChannel.Observer {
-                    override fun onMessage(buffer: DataChannel.Buffer) {
-                        // 接收到控制指令，通过信令服通知无障碍服务
-                    }
+                    override fun onMessage(buffer: DataChannel.Buffer) {}
                     override fun onBufferedAmountChange(p0: Long) {}
                     override fun onStateChange() {}
                 })
@@ -64,6 +60,7 @@ object WebRTCManager {
             override fun onAddTrack(receiver: RtpReceiver?, streams: Array<out MediaStream>?) {}
             override fun onRemoveStream(stream: MediaStream?) {}
             override fun onRemoveTrack(receiver: RtpReceiver?) {}
+            override fun onIceConnectionReceivingChange(receiving: Boolean) {} // 新增这个方法
         }
         peerConnection = factory.createPeerConnection(rtcConfig, observer)
         localVideoTrack?.let { peerConnection?.addTrack(it, listOf("screenshare")) }
