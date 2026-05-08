@@ -30,7 +30,7 @@ android {
 
 dependencies {
     implementation("io.getstream:stream-webrtc-android:1.1.1")
-    implementation("javax.jmdns:jmdns:3.5.8")
+    implementation("org.jmdns:jmdns:3.5.9")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
