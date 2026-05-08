@@ -2,8 +2,8 @@ package com.example.lanshare
 
 import android.content.Context
 import kotlinx.coroutines.*
-import org.jmdns.JmDNS
-import org.jmdns.ServiceInfo
+import javax.jmdns.JmDNS
+import javax.jmdns.ServiceInfo
 import java.net.InetAddress
 
 object DeviceDiscovery {
