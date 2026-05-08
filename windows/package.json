@@ -2,15 +2,16 @@
   "name": "lan-share-win",
   "version": "1.0.0",
   "description": "局域网屏幕共享与控制",
+  "author": "LanShare",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
   "dependencies": {
-    "electron": "^28.0.0",
     "multicast-dns": "^7.2.5"
   },
   "devDependencies": {
+    "electron": "^28.0.0",
     "electron-builder": "^24.9.1"
   },
   "build": {
