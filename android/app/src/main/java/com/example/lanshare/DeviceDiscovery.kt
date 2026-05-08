@@ -1,13 +1,14 @@
 package com.example.lanshare
 
 import android.content.Context
+import kotlinx.coroutines.*
 import org.jmdns.JmDNS
 import org.jmdns.ServiceInfo
 import java.net.InetAddress
 
 object DeviceDiscovery {
     private var jmdns: JmDNS? = null
-    val onlineDevices = mutableMapOf<String, Pair<String, Int>>() // name -> (ip, port)
+    val onlineDevices = mutableMapOf<String, Pair<String, Int>>()
 
     suspend fun register(context: Context, port: Int) {
         withContext(Dispatchers.IO) {
